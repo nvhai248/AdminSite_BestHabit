@@ -1,8 +1,10 @@
 import React from "react";
 import "./login.css";
 
-function Login() {
-  const handleSubmit = (e) => {
+interface LoginProps {}
+
+const Login: React.FC<LoginProps> = () => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add your login logic here
     console.log("OK");
@@ -21,6 +23,6 @@ function Login() {
       </form>
     </div>
   );
-}
+};
 
 export default Login;
