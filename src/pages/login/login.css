@@ -106,10 +106,29 @@ body {
     color: #10449A;
 }
 
+.remember-me {
+    float: left;
+    color: #10449A;
+    text-align: left;
+}
+
+.remember-me label,
+.remember-me input {
+    cursor: pointer;
+}
+
 @keyframes rotate {
     100% {
         background-position: 15% 50%;
     }
+}
+
+.login-form p {
+    display: block;
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    color: red;
+    margin-inline-start: 0px;
 }
 
 @media (width >=500px) {
