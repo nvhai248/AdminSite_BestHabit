@@ -3,12 +3,26 @@ import { useNavigate } from "react-router-dom";
 import "./login.css";
 import axiosInstance from "../../configs/axios.config";
 import { useAuth } from "../../provider/authContext";
+import { styled } from "styled-components";
 
 interface LoginProps {}
 
 const Login: React.FC<LoginProps> = () => {
   const navigate = useNavigate();
   const { setToken } = useAuth();
+
+  const CssLoginPage = styled.div`
+    height: 100%;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    background-image: url("imgs/background.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: "Ubuntu";
+    color: #000;
+    animation: rotate 6s infinite alternate linear;
+  `;
 
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [notification, setNotification] = useState<string>("");
@@ -53,8 +67,6 @@ const Login: React.FC<LoginProps> = () => {
         localStorage.removeItem("token");
       }
 
-      console.log(localStorage.getItem("token"));
-
       navigate("/dashboard");
     } catch (error) {
       const axiosError = error as any;
@@ -75,27 +87,29 @@ const Login: React.FC<LoginProps> = () => {
   };
 
   return (
-    <div className="login-card">
-      <h2>Login</h2>
-      <h3>Enter your credentials</h3>
+    <CssLoginPage>
+      <div className="login-card">
+        <h2>Login</h2>
+        <h3>Enter your credentials</h3>
 
-      <form className="login-form" onSubmit={handleSubmit}>
-        <input type="text" placeholder="Email" name="email" />
-        <input type="password" placeholder="Password" name="password" />
-        <div className="remember-me">
-          <input
-            type="checkbox"
-            id="rememberCheckbox"
-            onChange={() => {}}
-            onClick={handleRemember}
-            checked={isChecked}
-          />
-          <label htmlFor="rememberCheckbox">Remember me</label>
-        </div>
-        <p className="notification">{notification}</p>
-        <button type="submit">LOGIN</button>
-      </form>
-    </div>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <input type="text" placeholder="Email" name="email" />
+          <input type="password" placeholder="Password" name="password" />
+          <div className="remember-me">
+            <input
+              type="radio"
+              id="rememberCheckbox"
+              onChange={() => {}}
+              onClick={handleRemember}
+              checked={isChecked}
+            />
+            <label htmlFor="rememberCheckbox">Remember me</label>
+          </div>
+          <p className="notification">{notification}</p>
+          <button type="submit">LOGIN</button>
+        </form>
+      </div>
+    </CssLoginPage>
   );
 };
 

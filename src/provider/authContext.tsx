@@ -24,6 +24,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const isAuthenticated = () => {
     if (localStorage.getItem("token")) {
+      if (token == null) {
+        setToken(localStorage.getItem("token"));
+      }
+
       return true;
     } else {
       return !!token;

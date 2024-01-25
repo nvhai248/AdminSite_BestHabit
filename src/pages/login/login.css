@@ -5,22 +5,13 @@
 }
 
 html,
-body,
-.wrapper {
+body {
     height: 100%;
+    padding: 0px;
 }
 
-body {
-    display: grid;
-    place-items: center;
-    margin: 0;
-    padding: 0 24px;
-    background-image: url("background.svg");
-    background-repeat: no-repeat;
-    background-size: cover;
-    font-family: "Ubuntu";
-    color: #000;
-    animation: rotate 6s infinite alternate linear;
+.wrapper {
+    height: 100%;
 }
 
 .login-card {
