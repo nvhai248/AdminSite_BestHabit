@@ -60,6 +60,8 @@ body {
     overflow-x: hidden;
     scrollbar-width: none;
     transition: all 0.3s ease;
+    display: grid;
+    grid-template-rows: 10% 80% 10%;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -221,6 +223,16 @@ body {
     max-width: 400px;
     width: 100%;
     margin-right: auto;
+}
+
+.content nav .profile {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    width: 10rem;
+}
+
+.content nav .profile p {
+    margin-top: 5px;
 }
 
 

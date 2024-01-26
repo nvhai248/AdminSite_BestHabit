@@ -59,8 +59,6 @@ const Login: React.FC<LoginProps> = () => {
       // use token for another page
       setToken(token);
 
-      console.log(isChecked);
-
       if (isChecked) {
         localStorage.setItem("token", token);
       } else {

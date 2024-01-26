@@ -27,7 +27,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       if (token == null) {
         setToken(localStorage.getItem("token"));
       }
-
       return true;
     } else {
       return !!token;
