@@ -351,6 +351,43 @@ nav .bx-sun {
     margin-top: 36px;
 }
 
+.header .inputTime {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    width: 10rem;
+}
+
+
+.header .inputTime .bx {
+    color: green;
+    text-align: center;
+    justify-content: center;
+    font-size: 3rem
+}
+
+
+.header input[type="number"] {
+    width: 90%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+
+.header input::placeholder {
+    color: #999;
+}
+
+.header input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 8px rgba(0, 128, 0, 0.5);
+}
+
+.bottom-data .chart {
+    width: 100%;
+}
+
 .content main .insights li {
     padding: 24px;
     background: var(--light);
