@@ -132,8 +132,6 @@ const Dashboard: React.FC = () => {
           setOptionsChart(option);
           let data = NewData(response.data.data);
           setDataChart(data);
-
-          console.log(dataChart, optionsChart);
         } else {
           console.error("Invalid response format");
         }

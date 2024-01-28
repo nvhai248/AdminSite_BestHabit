@@ -288,14 +288,14 @@ nav .bx-sun {
     border-radius: 50%;
 }
 
-.orders .form-input {
+.tableItems .form-input {
     display: flex;
     align-items: center;
     height: 36px;
     width: 40rem;
 }
 
-.orders .form-input input {
+.tableItems .form-input input {
     flex-grow: 1;
     padding: 0 16px;
     height: 100%;
@@ -307,7 +307,7 @@ nav .bx-sun {
     color: var(--dark);
 }
 
-.orders .form-input button {
+.tableItems .form-input button {
     width: 80px;
     height: 100%;
     display: flex;
@@ -471,51 +471,51 @@ nav .bx-sun {
     cursor: pointer;
 }
 
-.content main .bottom-data .orders {
+.content main .bottom-data .tableItems {
     flex-grow: 1;
     flex-basis: 500px;
 }
 
-.content main .bottom-data .orders table {
+.content main .bottom-data .tableItems table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.content main .bottom-data .orders table th {
+.content main .bottom-data .tableItems table th {
     padding-bottom: 12px;
     font-size: 13px;
     text-align: left;
     border-bottom: 1px solid var(--grey);
 }
 
-.content main .bottom-data .orders table td {
+.content main .bottom-data .tableItems table td {
     padding: 16px 0;
 }
 
-.content main .bottom-data .orders table tr td:first-child {
+.content main .bottom-data .tableItems table tr td:first-child {
     display: flex;
     align-items: center;
     grid-gap: 12px;
     padding-left: 6px;
 }
 
-.content main .bottom-data .orders table td img {
+.content main .bottom-data .tableItems table td img {
     width: 36px;
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
 }
 
-.content main .bottom-data .orders table tbody tr {
+.content main .bottom-data .tableItems table tbody tr {
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-.content main .bottom-data .orders table tbody tr:hover {
+.content main .bottom-data .tableItems table tbody tr:hover {
     background: var(--grey);
 }
 
-.content main .bottom-data .orders table tr td .status {
+.content main .bottom-data .tableItems table tr td .status {
     font-size: 10px;
     padding: 6px 16px;
     color: var(--light);
@@ -523,15 +523,15 @@ nav .bx-sun {
     font-weight: 700;
 }
 
-.content main .bottom-data .orders table tr td .status.completed {
+.content main .bottom-data .tableItems table tr td .status.completed {
     background: var(--success);
 }
 
-.content main .bottom-data .orders table tr td .status.process {
+.content main .bottom-data .tableItems table tr td .status.process {
     background: var(--primary);
 }
 
-.content main .bottom-data .orders table tr td .status.pending {
+.content main .bottom-data .tableItems table tr td .status.pending {
     background: var(--warning);
 }
 
@@ -549,11 +549,11 @@ nav .bx-sun {
 
 @media screen and (max-width: 576px) {
 
-    .orders .form-input input {
+    .tableItems .form-input input {
         display: none;
     }
 
-    .orders .form-input button {
+    .tableItems .form-input button {
         width: auto;
         height: auto;
         background: transparent;
@@ -582,7 +582,7 @@ nav .bx-sun {
         min-width: 340px;
     }
 
-    .content main .bottom-data .orders table {
+    .content main .bottom-data .tableItems table {
         min-width: 340px;
     }
 }
