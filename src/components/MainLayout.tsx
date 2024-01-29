@@ -18,6 +18,7 @@ const MainLayout: React.FC = () => {
 
     if (localStorage.getItem("menuName") != null) {
       setChooseMenu(localStorage.getItem("menuName") || "");
+      navigate(`/dashboard/${chooseMenu || ""}`);
     }
 
     axiosInstance

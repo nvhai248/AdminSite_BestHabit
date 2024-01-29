@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../configs/axios.config";
 import { useAuth } from "../../provider/authContext";
+import "./challengePage.css";
 
 const ChallengePage: React.FC = () => {
-  const [users, setUsers] = useState<any>({});
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(4);
+  const [totalPage, setTotalPage] = useState<number>(7);
   const { token } = useAuth();
   useEffect(() => {
     axiosInstance
@@ -18,13 +21,18 @@ const ChallengePage: React.FC = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
 
+    setChallenges(challengeTemplateData);
+  }, []);
+  const clickChangePage = (page: number) => {
+    setCurrentPage(page);
+  };
   return (
     <main>
       <div className="header">
         <div className="left">
           <h1>Challenges</h1>
+          <div className="bx bx-plus"></div>
         </div>
       </div>
       <div className="bottom-data">
@@ -45,23 +53,90 @@ const ChallengePage: React.FC = () => {
           <table>
             <thead>
               <tr>
-                <th>User</th>
-                <th>Order Date</th>
-                <th>Status</th>
+                <th>Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>User joined</th>
+                <th colSpan={2}>Status</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <img src="images/profile-1.jpg" alt="User" />
-                  <p>John Doe</p>
-                </td>
-                <td>14-08-2023</td>
-                <td>
-                  <span className="status completed">Completed</span>
-                </td>
-              </tr>
+              {challenges.map((challenge) => (
+                <tr key={challenge.id}>
+                  <td>{challenge.name}</td>
+                  <td>{challenge.start_date}</td>
+                  <td>{challenge.end_date}</td>
+                  <td>{challenge.count_user_joined}</td>
+                  <td>
+                    <span
+                      className={`status ${
+                        challenge.status === true ? "deleted" : "active"
+                      }`}
+                    >
+                      {challenge.status === true ? "deleted" : "active"}
+                    </span>
+                  </td>
+                  <td className="challenge-action">
+                    <div
+                      className={`bx bx-trash ${
+                        challenge.status === true ? "display-none" : ""
+                      }`}
+                    >
+                      <div className="text-on-hover">deleted</div>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
+            <ul>
+              <li
+                className={`bx bx-chevron-left ${
+                  currentPage == 1 ? "visibility-hidden" : ""
+                }`}
+                onClick={() => {
+                  setCurrentPage(currentPage - 1);
+                }}
+              ></li>
+              <li>{currentPage - 2 > 1 ? "..." : ""}</li>
+              <li
+                onClick={() => {
+                  clickChangePage(currentPage - 2);
+                }}
+              >
+                {currentPage - 2 > 0 ? currentPage - 2 : ""}
+              </li>
+              <li
+                onClick={() => {
+                  clickChangePage(currentPage - 1);
+                }}
+              >
+                {currentPage - 1 > 0 ? currentPage - 1 : ""}
+              </li>
+              <li className="current">{currentPage}</li>
+              <li
+                onClick={() => {
+                  clickChangePage(currentPage + 1);
+                }}
+              >
+                {totalPage - currentPage >= 1 ? currentPage + 1 : ""}
+              </li>
+              <li
+                onClick={() => {
+                  clickChangePage(currentPage + 2);
+                }}
+              >
+                {totalPage - currentPage >= 2 ? currentPage + 2 : ""}
+              </li>
+              <li>{totalPage - currentPage > 2 ? "..." : ""}</li>
+              <li
+                className={`bx bx-chevron-right ${
+                  currentPage == totalPage ? "visibility-hidden" : ""
+                }`}
+                onClick={() => {
+                  setCurrentPage(currentPage + 1);
+                }}
+              ></li>
+            </ul>
           </table>
         </div>
       </div>
@@ -69,4 +144,43 @@ const ChallengePage: React.FC = () => {
   );
 };
 
+type Challenge = {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  description: string;
+  name: string;
+  start_date: string;
+  end_date: string;
+  experience_point: number;
+  count_user_joined: number;
+  status: boolean;
+};
+
+const challengeTemplateData: Challenge[] = [
+  {
+    id: "gGzTFTGJB8Wk",
+    created_at: "2023-11-29 17:10:42",
+    updated_at: "2023-11-29 17:17:30",
+    description: "Trong thời gian 4 tháng đạt B2",
+    name: "Đổi tên lại nè",
+    start_date: "2023-11-01",
+    end_date: "2023-03-11",
+    experience_point: 1000,
+    count_user_joined: 0,
+    status: false,
+  },
+  {
+    id: "e5352HrePro4",
+    created_at: "2023-11-29 17:10:18",
+    updated_at: "2023-11-30 17:44:44",
+    description: "Trong thời gian 3 tháng đạt B1",
+    name: "Vjp pro học tiếng Nhật",
+    start_date: "2023-11-29",
+    end_date: "2024-02-28",
+    experience_point: 1000,
+    count_user_joined: 1,
+    status: true,
+  },
+];
 export default ChallengePage;

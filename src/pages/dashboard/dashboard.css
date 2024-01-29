@@ -507,7 +507,6 @@ nav .bx-sun {
 }
 
 .content main .bottom-data .tableItems table tbody tr {
-    cursor: pointer;
     transition: all 0.3s ease;
 }
 
@@ -523,15 +522,19 @@ nav .bx-sun {
     font-weight: 700;
 }
 
-.content main .bottom-data .tableItems table tr td .status.completed {
+.content main .bottom-data .tableItems table tr td .status.active {
     background: var(--success);
 }
 
-.content main .bottom-data .tableItems table tr td .status.process {
-    background: var(--primary);
+.content main .bottom-data .tableItems table tr td .status.deleted {
+    background: var(--danger);
 }
 
-.content main .bottom-data .tableItems table tr td .status.pending {
+.content main .bottom-data .tableItems table tr td .status.banned {
+    background: var(--light-danger);
+}
+
+.content main .bottom-data .tableItems table tr td .status.not-verified {
     background: var(--warning);
 }
 
