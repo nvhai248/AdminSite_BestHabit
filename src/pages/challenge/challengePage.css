@@ -1,4 +1,100 @@
 .bottom-data .challenge-action .bx {
-    border-radius: 50%;
-    cursor: pointer;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.header .bx-plus {
+  color: #388e3c;
+  font-size: 4rem;
+  cursor: pointer;
+  border-radius: 50%;
+  font-weight: bolder;
+}
+
+.header .bx-plus:hover {
+  scale: 110%;
+  box-shadow: 0 0 8px green;
+}
+
+.bx-plus .text-on-hover {
+  font-size: 0.7rem;
+  width: 100%;
+  text-align: center;
+}
+
+.bx-plus:hover .text-on-hover {
+  display: block;
+}
+
+/* Add your custom modal styles */
+.challenge-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 50%;
+  width: 100%;
+  animation: fadeIn 0.5s ease-in-out; /* Add fade-in animation */
+}
+
+/* Add your custom overlay styles */
+.challenge-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Add styles for input fields */
+.challenge-modal form label {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.challenge-modal form input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Add styles for buttons */
+.buttons-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.buttons-container button {
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Add transition effect */
+}
+
+.buttons-container button:hover {
+  background-color: #45a049;
+}
+
+/* Add fade-out animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

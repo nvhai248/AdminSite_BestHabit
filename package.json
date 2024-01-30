@@ -15,9 +15,11 @@
     "axios": "^1.6.5",
     "chart.js": "^4.4.1",
     "dotenv": "^16.3.2",
+    "modal": "^1.2.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
+    "react-modal": "^3.16.1",
     "react-router-dom": "^6.21.3",
     "react-scripts": "5.0.1",
     "styled-components": "^6.1.8",
@@ -47,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-modal": "^3.16.3"
   }
 }

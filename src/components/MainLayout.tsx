@@ -2,8 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../provider/authContext";
 import axiosInstance from "../configs/axios.config";
+import styled from "styled-components";
 
 const MainLayout: React.FC = () => {
+  const CssMainLayout = styled.div`
+    font-family: "Poppins", sans-serif;
+  `;
+
   const navigate = useNavigate();
   const [isSidebarClosed, setSidebarClosed] = useState<boolean>(false);
   const [isDarkMode, setDarkMode] = useState<boolean>(false);
@@ -53,7 +58,7 @@ const MainLayout: React.FC = () => {
   };
   const { token, logout } = useAuth();
   return (
-    <div>
+    <CssMainLayout>
       {/* SIDE BAR */}
       <div className={`sidebar ${isSidebarClosed ? "close" : ""}`}>
         <a className="logo">
@@ -108,7 +113,10 @@ const MainLayout: React.FC = () => {
             onClick={handleThemeToggle}
           ></label>
           <a className="profile">
-            <p>Hello {infoMainUser == null ? "" : infoMainUser.name}</p>
+            <p>
+              Hello{" "}
+              {infoMainUser == null ? "" : getFirstName(infoMainUser.name)}
+            </p>
             <img
               src={
                 infoMainUser == null
@@ -125,8 +133,20 @@ const MainLayout: React.FC = () => {
           <Outlet />
         </div>
       </div>
-    </div>
+    </CssMainLayout>
   );
+};
+
+const getFirstName = (fullName: string) => {
+  if (!fullName) {
+    return "";
+  }
+
+  // Split the full name into an array of words
+  const words = fullName.split(" ");
+
+  // Return the first word (first name)
+  return words[0];
 };
 
 export default MainLayout;

@@ -61,9 +61,9 @@ const Login: React.FC<LoginProps> = () => {
 
       if (isChecked) {
         localStorage.setItem("token", token);
-      } else {
+      } /* else {
         localStorage.removeItem("token");
-      }
+      } */
 
       navigate("/dashboard");
     } catch (error) {

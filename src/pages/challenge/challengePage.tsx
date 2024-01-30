@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../configs/axios.config";
 import { useAuth } from "../../provider/authContext";
+import Modal from "react-modal";
 import "./challengePage.css";
 
 const ChallengePage: React.FC = () => {
@@ -8,6 +9,22 @@ const ChallengePage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(4);
   const [totalPage, setTotalPage] = useState<number>(7);
   const { token } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCreateChallenge = () => {
+    // Handle the creation of the challenge here
+    // You can access the input values using the state of the input fields
+    closeModal();
+  };
+
   useEffect(() => {
     axiosInstance
       .get("/challenges", {
@@ -32,7 +49,51 @@ const ChallengePage: React.FC = () => {
       <div className="header">
         <div className="left">
           <h1>Challenges</h1>
-          <div className="bx bx-plus"></div>
+        </div>
+
+        <div className="right">
+          <div className="bx bx-plus" onClick={openModal}>
+            <div className="text-on-hover">Create challenge</div>
+          </div>
+          <Modal
+            isOpen={isModalOpen}
+            onRequestClose={closeModal}
+            contentLabel="Create Challenge Modal"
+            className="challenge-modal" // Add your custom modal class
+            overlayClassName="challenge-overlay" // Add your custom overlay class
+          >
+            <h2>Create Challenge</h2>
+            <form>
+              <label>
+                Challenge Name:
+                <input type="text" name="challengeName" />
+              </label>
+              <label>
+                Description:
+                <input type="text" name="description" />
+              </label>
+              <label>
+                Experience Point:
+                <input type="text" name="exp-point" />
+              </label>
+              <label>
+                Start Date:
+                <input type="date" name="startDate" />
+              </label>
+              <label>
+                End Date:
+                <input type="date" name="endDate" />
+              </label>
+              <div className="buttons-container">
+                <button type="button" onClick={handleCreateChallenge}>
+                  Create
+                </button>
+                <button type="button" onClick={closeModal}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </Modal>
         </div>
       </div>
       <div className="bottom-data">

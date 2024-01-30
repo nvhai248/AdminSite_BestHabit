@@ -19,7 +19,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
 }
 
 .bx {
@@ -241,6 +240,7 @@ body {
     height: 36px;
     object-fit: cover;
     border-radius: 50%;
+    justify-content: center;
 }
 
 .content nav .theme-toggle {
