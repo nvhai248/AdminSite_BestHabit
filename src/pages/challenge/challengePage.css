@@ -28,6 +28,8 @@
 
 /* Add your custom modal styles */
 .challenge-modal {
+  font-family: "Poppins", sans-serif;
+  background-color: var(--dark);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -53,10 +55,20 @@
   align-items: center;
 }
 
+.challenge-modal h2 {
+  margin-bottom: 10px;
+  text-align: center;
+  border-bottom: 2px;
+}
+
 /* Add styles for input fields */
 .challenge-modal form label {
   display: block;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
+}
+
+.challenge-modal form .cancel {
+  background-color: rgb(221, 14, 14);
 }
 
 .challenge-modal form input {
@@ -87,6 +99,38 @@
 
 .buttons-container button:hover {
   background-color: #45a049;
+}
+
+.buttons-container .cancel:hover {
+  background-color: red;
+}
+
+.error-modal {
+  background-color: #f44336;
+}
+
+.success-modal {
+  background-color: #4caf50;
+}
+
+.error-modal,
+.success-modal {
+  position: fixed;
+  z-index: 2;
+  bottom: 20px;
+  right: 20px;
+  padding: 15px;
+  color: white;
+  border-radius: 5px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.error-modal.show,
+.success-modal.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Add fade-out animation */

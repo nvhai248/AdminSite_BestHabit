@@ -75,7 +75,6 @@
 }
 
 .bottom-data ul li:hover {
-    text-decoration: underline;
     cursor: pointer;
     color: #1976D2;
 }

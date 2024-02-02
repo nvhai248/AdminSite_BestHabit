@@ -6,10 +6,43 @@ import "./challengePage.css";
 
 const ChallengePage: React.FC = () => {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(4);
-  const [totalPage, setTotalPage] = useState<number>(7);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentName, setCurrentName] = useState<string>("");
+  const [totalPage, setTotalPage] = useState<number>(1);
   const { token } = useAuth();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
+  const [modalMessage, setModalMessage] = useState<string>("");
+
+  useEffect(() => {
+    setTableData(currentPage, currentName);
+  }, [currentPage, currentName]);
+
+  useEffect(() => {
+    if (isSuccessModalOpen || isErrorModalOpen) {
+      setTimeout(() => {
+        setIsSuccessModalOpen(false);
+        setIsErrorModalOpen(false);
+      }, 3000);
+    }
+  }, [isSuccessModalOpen, isErrorModalOpen]);
+
+  const openSuccessModal = (message: string) => {
+    setModalMessage(message);
+    setIsSuccessModalOpen(true);
+    setTimeout(() => {
+      setIsSuccessModalOpen(false);
+    }, 3000);
+  };
+
+  const openErrorModal = (message: string) => {
+    setModalMessage(message);
+    setIsErrorModalOpen(true);
+    setTimeout(() => {
+      setIsErrorModalOpen(false);
+    }, 3000);
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -20,29 +53,101 @@ const ChallengePage: React.FC = () => {
   };
 
   const handleCreateChallenge = () => {
-    // Handle the creation of the challenge here
-    // You can access the input values using the state of the input fields
-    closeModal();
-  };
+    const challengeName = (
+      document.querySelector('input[name="challengeName"]') as HTMLInputElement
+    ).value;
+    const description = (
+      document.querySelector('input[name="description"]') as HTMLInputElement
+    ).value;
+    const expPoint = (
+      document.querySelector('input[name="exp-point"]') as HTMLInputElement
+    ).value;
+    const startDate = (
+      document.querySelector('input[name="startDate"]') as HTMLInputElement
+    ).value;
+    const endDate = (
+      document.querySelector('input[name="endDate"]') as HTMLInputElement
+    ).value;
 
-  useEffect(() => {
+    if (
+      !challengeName ||
+      !description ||
+      !expPoint ||
+      !startDate ||
+      !endDate ||
+      endDate < startDate
+    ) {
+      alert("Please enter all information!");
+      return;
+    }
+
+    const newChallenge = {
+      name: challengeName,
+      description: description,
+      experience_point: parseInt(expPoint),
+      start_date: startDate,
+      end_date: endDate,
+    };
+
     axiosInstance
-      .get("/challenges", {
+      .post("/challenges", newChallenge, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        console.log(response.data.data);
+        openSuccessModal("Challenge created successfully!");
+        setTableData(currentPage, "");
+      })
+      .catch((error) => {
+        openErrorModal("Failed to create challenge.");
+      });
+
+    closeModal();
+  };
+
+  const setTableData = (page: number, name: string) => {
+    axiosInstance
+      .get(`/challenges?page=${page}&name=${name}&limit=8`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.data) {
+          setChallenges(response.data.data);
+          setCurrentPage(page);
+          setTotalPage(
+            Math.floor(
+              response.data.paging.total / response.data.paging.limit
+            ) + 1
+          );
+        }
       })
       .catch((error) => {
         console.error(error);
       });
+  };
 
-    setChallenges(challengeTemplateData);
-  }, []);
   const clickChangePage = (page: number) => {
+    setTableData(page, currentName);
     setCurrentPage(page);
+  };
+
+  const deleteChallenge = (challengeId: string) => {
+    axiosInstance
+      .delete(`/challenges/${challengeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        openSuccessModal("Challenge deleted successfully!");
+        setTableData(currentPage, currentName);
+      })
+      .catch((error) => {
+        openErrorModal("Error deleted challenge!");
+      });
   };
   return (
     <main>
@@ -55,57 +160,69 @@ const ChallengePage: React.FC = () => {
           <div className="bx bx-plus" onClick={openModal}>
             <div className="text-on-hover">Create challenge</div>
           </div>
-          <Modal
-            isOpen={isModalOpen}
-            onRequestClose={closeModal}
-            contentLabel="Create Challenge Modal"
-            className="challenge-modal" // Add your custom modal class
-            overlayClassName="challenge-overlay" // Add your custom overlay class
-          >
-            <h2>Create Challenge</h2>
-            <form>
-              <label>
-                Challenge Name:
-                <input type="text" name="challengeName" />
-              </label>
-              <label>
-                Description:
-                <input type="text" name="description" />
-              </label>
-              <label>
-                Experience Point:
-                <input type="text" name="exp-point" />
-              </label>
-              <label>
-                Start Date:
-                <input type="date" name="startDate" />
-              </label>
-              <label>
-                End Date:
-                <input type="date" name="endDate" />
-              </label>
-              <div className="buttons-container">
-                <button type="button" onClick={handleCreateChallenge}>
-                  Create
-                </button>
-                <button type="button" onClick={closeModal}>
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </Modal>
         </div>
       </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Create Challenge Modal"
+        className="challenge-modal" // Add your custom modal class
+        overlayClassName="challenge-overlay" // Add your custom overlay class
+      >
+        <h2>Create Challenge</h2>
+        <form>
+          <label>
+            Challenge Name:
+            <input type="text" name="challengeName" />
+          </label>
+          <label>
+            Description:
+            <input type="text" name="description" />
+          </label>
+          <label>
+            Experience Point:
+            <input type="text" name="exp-point" />
+          </label>
+          <label>
+            Start Date:
+            <input type="date" name="startDate" />
+          </label>
+          <label>
+            End Date:
+            <input type="date" name="endDate" />
+          </label>
+          <div className="buttons-container">
+            <button type="button" onClick={handleCreateChallenge}>
+              Create
+            </button>
+            <button type="button" className="cancel" onClick={closeModal}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </Modal>
       <div className="bottom-data">
         <div className="tableItems">
           <div className="header">
             <i className="bx bx-table"></i>
-            <h3>Recent Orders</h3>
+            <h3>List Challenge</h3>
             <i className="bx bx-filter"></i>
-            <form action="#">
+            <form>
               <div className="form-input">
-                <input type="search" placeholder="Search..." />
-                <button className="search-btn" type="submit">
+                <input
+                  type="search"
+                  placeholder="Search..."
+                  value={currentName}
+                  onChange={(e) => setCurrentName(e.target.value)}
+                />
+                <button
+                  className="search-btn"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setTableData(1, currentName);
+                  }}
+                >
                   <i className="bx bx-search"></i>
                 </button>
               </div>
@@ -122,40 +239,49 @@ const ChallengePage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {challenges.map((challenge) => (
-                <tr key={challenge.id}>
-                  <td>{challenge.name}</td>
-                  <td>{challenge.start_date}</td>
-                  <td>{challenge.end_date}</td>
-                  <td>{challenge.count_user_joined}</td>
-                  <td>
-                    <span
-                      className={`status ${
-                        challenge.status === true ? "deleted" : "active"
-                      }`}
-                    >
-                      {challenge.status === true ? "deleted" : "active"}
-                    </span>
-                  </td>
-                  <td className="challenge-action">
-                    <div
-                      className={`bx bx-trash ${
-                        challenge.status === true ? "display-none" : ""
-                      }`}
-                    >
-                      <div className="text-on-hover">deleted</div>
-                    </div>
-                  </td>
+              {challenges && challenges.length > 0 ? (
+                challenges.map((challenge) => (
+                  <tr key={challenge.id}>
+                    <td>{challenge.name}</td>
+                    <td>{challenge.start_date}</td>
+                    <td>{challenge.end_date}</td>
+                    <td>{challenge.count_user_joined}</td>
+                    <td>
+                      <span
+                        className={`status ${
+                          challenge.status === true ? "active" : "deleted"
+                        }`}
+                      >
+                        {challenge.status === true ? "active" : "deleted"}
+                      </span>
+                    </td>
+                    <td className="challenge-action">
+                      <div
+                        className={`bx bx-trash ${
+                          challenge.status === true ? "" : "display-none"
+                        }`}
+                        onClick={() => {
+                          deleteChallenge(challenge.id);
+                        }}
+                      >
+                        <div className="text-on-hover">deleted</div>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td>Challenges already empty!</td>
                 </tr>
-              ))}
+              )}
             </tbody>
             <ul>
               <li
                 className={`bx bx-chevron-left ${
-                  currentPage == 1 ? "visibility-hidden" : ""
+                  currentPage === 1 ? "visibility-hidden" : ""
                 }`}
                 onClick={() => {
-                  setCurrentPage(currentPage - 1);
+                  clickChangePage(currentPage - 1);
                 }}
               ></li>
               <li>{currentPage - 2 > 1 ? "..." : ""}</li>
@@ -191,16 +317,23 @@ const ChallengePage: React.FC = () => {
               <li>{totalPage - currentPage > 2 ? "..." : ""}</li>
               <li
                 className={`bx bx-chevron-right ${
-                  currentPage == totalPage ? "visibility-hidden" : ""
+                  currentPage === totalPage ? "visibility-hidden" : ""
                 }`}
                 onClick={() => {
-                  setCurrentPage(currentPage + 1);
+                  clickChangePage(currentPage + 1);
                 }}
               ></li>
             </ul>
           </table>
         </div>
       </div>
+      {isSuccessModalOpen && (
+        <div className={`success-modal show`}>{modalMessage}</div>
+      )}
+
+      {isErrorModalOpen && (
+        <div className={`error-modal show`}>{modalMessage}</div>
+      )}
     </main>
   );
 };
@@ -217,31 +350,4 @@ type Challenge = {
   count_user_joined: number;
   status: boolean;
 };
-
-const challengeTemplateData: Challenge[] = [
-  {
-    id: "gGzTFTGJB8Wk",
-    created_at: "2023-11-29 17:10:42",
-    updated_at: "2023-11-29 17:17:30",
-    description: "Trong thời gian 4 tháng đạt B2",
-    name: "Đổi tên lại nè",
-    start_date: "2023-11-01",
-    end_date: "2023-03-11",
-    experience_point: 1000,
-    count_user_joined: 0,
-    status: false,
-  },
-  {
-    id: "e5352HrePro4",
-    created_at: "2023-11-29 17:10:18",
-    updated_at: "2023-11-30 17:44:44",
-    description: "Trong thời gian 3 tháng đạt B1",
-    name: "Vjp pro học tiếng Nhật",
-    start_date: "2023-11-29",
-    end_date: "2024-02-28",
-    experience_point: 1000,
-    count_user_joined: 1,
-    status: true,
-  },
-];
 export default ChallengePage;
