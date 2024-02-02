@@ -5,27 +5,124 @@ import "./userPage.css";
 
 const UserPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(4);
-  const [totalPage, setTotalPage] = useState<number>(7);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(1);
   const { token } = useAuth();
+  const [currentName, setCurrentName] = useState<string>("");
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
+  const [modalMessage, setModalMessage] = useState<string>("");
+
   useEffect(() => {
+    setTableData(currentPage, currentName);
+  }, [currentName, currentPage]);
+
+  useEffect(() => {
+    if (isSuccessModalOpen || isErrorModalOpen) {
+      setTimeout(() => {
+        setIsSuccessModalOpen(false);
+        setIsErrorModalOpen(false);
+      }, 3000);
+    }
+  }, [isSuccessModalOpen, isErrorModalOpen]);
+
+  const openSuccessModal = (message: string) => {
+    setModalMessage(message);
+    setIsSuccessModalOpen(true);
+    setTimeout(() => {
+      setIsSuccessModalOpen(false);
+    }, 3000);
+  };
+
+  const openErrorModal = (message: string) => {
+    setModalMessage(message);
+    setIsErrorModalOpen(true);
+    setTimeout(() => {
+      setIsErrorModalOpen(false);
+    }, 3000);
+  };
+
+  const setTableData = (page: number, name: string) => {
     axiosInstance
-      .get("/users", {
+      .get(`/users?page=${page}&name=${name}&limit=8`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        console.log(response.data.data);
+        if (response.data) {
+          setUsers(response.data.data);
+          setCurrentPage(page);
+          setTotalPage(
+            Math.floor(
+              response.data.paging.total / response.data.paging.limit
+            ) + 1
+          );
+        }
       })
       .catch((error) => {
         console.error(error);
       });
+  };
 
-    setUsers(userTemplateData);
-  }, []);
+  const deleteUser = (userId: string) => {
+    axiosInstance
+      .delete(`/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        openSuccessModal("Successfully deleted user!");
+        setTableData(currentPage, currentName);
+      })
+      .catch((error) => {
+        openErrorModal("Error deleting user!");
+      });
+  };
+
+  const bannedUser = (userId: string) => {
+    axiosInstance
+      .patch(
+        `/users/${userId}/banned`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        openSuccessModal("Successfully banned user!");
+        setTableData(currentPage, currentName);
+      })
+      .catch((error) => {
+        console.log(error);
+        openErrorModal("Error banned user!");
+      });
+  };
+
+  const unbannedUser = (userId: string) => {
+    axiosInstance
+      .patch(
+        `/users/${userId}/unbanned`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        openSuccessModal("Successfully unbanned user!");
+        setTableData(currentPage, currentName);
+      })
+      .catch((error) => {
+        console.log(error);
+        openErrorModal("Error unbanned user!");
+      });
+  };
 
   const clickChangePage = (page: number) => {
+    setTableData(page, currentName);
     setCurrentPage(page);
   };
   return (
@@ -98,6 +195,9 @@ const UserPage: React.FC = () => {
                       className={`bx bx-trash ${
                         user.status === 0 ? "display-none" : ""
                       }`}
+                      onClick={() => {
+                        deleteUser(user.id);
+                      }}
                     >
                       <div className="text-on-hover">deleted</div>
                     </div>
@@ -107,6 +207,9 @@ const UserPage: React.FC = () => {
                           ? "display-none"
                           : ""
                       }`}
+                      onClick={() => {
+                        bannedUser(user.id);
+                      }}
                     >
                       <div className="text-on-hover">banned</div>
                     </div>
@@ -118,6 +221,9 @@ const UserPage: React.FC = () => {
                           ? "display-none"
                           : ""
                       }`}
+                      onClick={() => {
+                        unbannedUser(user.id);
+                      }}
                     >
                       <div className="text-on-hover">unbanned</div>
                     </div>
@@ -128,10 +234,10 @@ const UserPage: React.FC = () => {
             <ul>
               <li
                 className={`bx bx-chevron-left ${
-                  currentPage == 1 ? "visibility-hidden" : ""
+                  currentPage === 1 ? "visibility-hidden" : ""
                 }`}
                 onClick={() => {
-                  setCurrentPage(currentPage - 1);
+                  clickChangePage(currentPage - 1);
                 }}
               ></li>
               <li>{currentPage - 2 > 1 ? "..." : ""}</li>
@@ -167,16 +273,24 @@ const UserPage: React.FC = () => {
               <li>{totalPage - currentPage > 2 ? "..." : ""}</li>
               <li
                 className={`bx bx-chevron-right ${
-                  currentPage == totalPage ? "visibility-hidden" : ""
+                  currentPage === totalPage ? "visibility-hidden" : ""
                 }`}
                 onClick={() => {
-                  setCurrentPage(currentPage + 1);
+                  clickChangePage(currentPage + 1);
                 }}
               ></li>
             </ul>
           </table>
         </div>
       </div>
+
+      {isSuccessModalOpen && (
+        <div className={`success-modal show`}>{modalMessage}</div>
+      )}
+
+      {isErrorModalOpen && (
+        <div className={`error-modal show`}>{modalMessage}</div>
+      )}
     </main>
   );
 };
@@ -198,139 +312,5 @@ type User = {
   challenge_count: number;
   status: number;
 };
-
-const userTemplateData: User[] = [
-  {
-    id: "3w5rMJ7r2JjRwN",
-    email: "lehai19022002@gmail.com",
-    created_at: "2023-12-20 23:28:35",
-    updated_at: "2024-01-28 11:23:04",
-    phone: "0111111112",
-    name: "Lê Nguyên Sinh",
-    avatar: {
-      id: 0,
-      url: "https://avatars.githubusercontent.com/u/74849616?v=4",
-      width: 0,
-      height: 0,
-      cloud_name: "s3",
-      extension: ".png",
-    },
-    level: 1,
-    experience: 0,
-    settings: {
-      theme: "light",
-      language: "en",
-    },
-    role: "user",
-    habit_count: 2,
-    task_count: 2,
-    challenge_count: 0,
-    status: 0,
-  },
-  {
-    id: "3w4MYPFc9KonuA",
-    created_at: "2023-12-20 23:28:35",
-    updated_at: "2024-01-28 11:23:04",
-    email: "congacon3122@gmail.com",
-    phone: "",
-    name: "Hải Nguyễn",
-    avatar: {
-      id: 0,
-      url: "https://lh3.googleusercontent.com/a/ACg8ocJ-wuyyVR6d-r5sJUIgqUNJjXXNJ6bbtPlQW9EKsw8l=s96-c",
-      width: 0,
-      height: 0,
-      cloud_name: "Google",
-    },
-    level: 1,
-    experience: 0,
-    settings: null,
-    role: "user",
-    habit_count: 0,
-    task_count: 0,
-    challenge_count: 0,
-    status: -1,
-  },
-  {
-    id: "3pf1vULa2NmdGk",
-    created_at: "2023-12-05 23:18:58",
-    updated_at: "2024-01-28 11:24:36",
-    email: "lnsss@gmail.com",
-    phone: "0111111112",
-    name: "Lê Nguyên Sinh",
-    avatar: {
-      id: 0,
-      url: "https://avatars.githubusercontent.com/u/74849616?v=4",
-      width: 0,
-      height: 0,
-      cloud_name: "s3",
-      extension: ".png",
-    },
-    level: 1,
-    experience: 0,
-    settings: {
-      theme: "light",
-      language: "en",
-    },
-    role: "user",
-    habit_count: 0,
-    task_count: 0,
-    challenge_count: 0,
-    status: -2,
-  },
-  {
-    id: "3pbKABFePC7xDe",
-    created_at: "2023-11-20 17:38:30",
-    updated_at: "2024-01-28 11:24:36",
-    email: "lh@gmail.com",
-    phone: "08130111111",
-    name: "Hoàng Văn Thất",
-    avatar: {
-      id: 0,
-      url: "https://avatars.githubusercontent.com/u/74849616?v=4",
-      width: 0,
-      height: 0,
-      cloud_name: "s3",
-      extension: ".png",
-    },
-    level: 1,
-    experience: 0,
-    settings: {
-      theme: "dark",
-      language: "en",
-    },
-    role: "user",
-    habit_count: 6,
-    task_count: 4,
-    challenge_count: 1,
-    status: 1,
-  },
-  {
-    id: "3mMo3hVGTE4VTN",
-    created_at: "2023-11-16 12:31:54",
-    updated_at: "2024-01-28 11:23:04",
-    email: "nvhai2408@gmail.com",
-    phone: "",
-    name: "Nguyễn Văn Hải",
-    level: 1,
-    experience: 0,
-    settings: {
-      theme: "light",
-      language: "en",
-    },
-    avatar: {
-      id: 0,
-      url: "https://avatars.githubusercontent.com/u/74849616?v=4",
-      width: 0,
-      height: 0,
-      cloud_name: "s3",
-      extension: ".png",
-    },
-    role: "user",
-    habit_count: 0,
-    task_count: 4,
-    challenge_count: 0,
-    status: 1,
-  },
-];
 
 export default UserPage;
